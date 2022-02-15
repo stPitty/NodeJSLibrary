@@ -1,0 +1,37 @@
+GET {{baseUrl}}/books/
+###
+
+POST {{baseUrl}}/books/
+Content-Type: application/json
+
+{
+  "title": "APITitle",
+  "description": "This is my title from API",
+  "authors": "stPitty",
+  "favorite": "Number one",
+  "fileCover": "SomeText",
+  "fileName": "Okay"
+}
+###
+
+PUT {{baseUrl}}/books/sktwif2ckzod3lxf/
+Content-Type: application/json
+
+{
+  "title": "NewTitle"
+}
+###
+
+DELETE {{baseUrl}}/books/sktwif02kzocjhzp/
+
+###
+
+POST {{baseUrl}}/user/login/
+Content-Type: application/json
+
+{
+  "id": 12,
+  "mail": "example@mail.com"
+}
+
+###
