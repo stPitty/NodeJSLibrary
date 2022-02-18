@@ -14,7 +14,7 @@ Content-Type: application/json
 }
 ###
 
-PUT {{baseUrl}}/books/sktwif2ckzod3lxf/
+PUT {{baseUrl}}/books/sktwigfnkzpzk9wy/
 Content-Type: application/json
 
 {
@@ -22,8 +22,7 @@ Content-Type: application/json
 }
 ###
 
-DELETE {{baseUrl}}/books/sktwif02kzocjhzp/
-
+DELETE {{baseUrl}}/books/sktwigfnkzpzk9wy/
 ###
 
 POST {{baseUrl}}/user/login/
@@ -33,5 +32,15 @@ Content-Type: application/json
   "id": 12,
   "mail": "example@mail.com"
 }
+###
 
+POST {{baseUrl}}/books/upload-book/
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="fileBook"; filename="demoid.txt";
+< ./input.txt --boundary--
+###
+
+GET {{baseUrl}}/books/demoid.txt/download/
 ###

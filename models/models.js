@@ -2,7 +2,7 @@ const uid = require('uniqid');
 
 
 class Book {
-  constructor(title, description, authors, favorite, fileCover, fileName, id=uid()) {
+  constructor(title, description, authors, favorite, fileCover, fileName, fileBook, id=uid()) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -10,6 +10,7 @@ class Book {
     this.favorite = favorite;
     this.fileCover = fileCover;
     this.fileName = fileName;
+    this.fileBook = fileBook;
   }
 }
 
