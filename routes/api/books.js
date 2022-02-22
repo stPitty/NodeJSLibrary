@@ -2,30 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const models = require('../../models/models');
+const { books } = models.dataBase;
 const fileMiddleware = require('../../middleware/book-file')
 
-
-function createData(qty, object) {
-  object.books = [];
-  let index = 0;
-  while (index < qty) {
-    let newBook = new models.Book(
-      `This is book ${index}`,
-      `Info about book ${index}`,
-      `K.Mathers`,
-      `Some info ${index}`,
-      `${index}.file`,
-      `name of ${index}`,
-      `defaultPath`
-    )
-    object.books.push(newBook);
-    index++
-  }
-}
-
-const dataBase = {};
-createData(4, dataBase);
-const { books } = dataBase;
 
 router
   .get('/', (req, res) => {

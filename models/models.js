@@ -14,7 +14,30 @@ class Book {
   }
 }
 
+
+function createData(qty, object) {
+  object.books = [];
+  let index = 0;
+  while (index < qty) {
+    let newBook = new Book(
+      `This is book ${index}`,
+      `Info about book ${index}`,
+      `K.Mathers`,
+      `Some info ${index}`,
+      `${index}.file`,
+      `name of ${index}`,
+      `defaultPath`
+    )
+    object.books.push(newBook);
+    index++
+  }
+}
+
+const dataBase = {};
+createData(4, dataBase);
+
 module.exports = {
+  dataBase: dataBase,
   Book: Book,
 }
 
