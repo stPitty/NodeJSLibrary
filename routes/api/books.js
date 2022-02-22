@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const models = require('../models/models');
-const fileMiddleware = require('../middleware/book-file')
+const models = require('../../models/models');
+const fileMiddleware = require('../../middleware/book-file')
 
 
 function createData(qty, object) {
