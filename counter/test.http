@@ -1,0 +1,4 @@
+POST http://localhost:80/counter/12312/incr
+###
+
+GET http://localhost:80/counter/12312

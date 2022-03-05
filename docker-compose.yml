@@ -1,0 +1,22 @@
+services:
+  redis:
+    image: redis:latest
+  counter:
+    build: counter/.
+    ports:
+      - 3002:3002
+    environment:
+      - REDISURL=redis://redis
+      - PORT=3002
+    depends_on:
+      - redis
+  library:
+    build: library/.
+    ports:
+      - 80:80
+    environment:
+      - PORT=80
+      - DATAURL=//counter
+    depends_on:
+      - counter
+      - redis
