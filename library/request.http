@@ -14,7 +14,7 @@ Content-Type: application/json
 }
 ###
 
-PUT {{baseUrl}}/books/sktwigfnkzpzk9wy/
+PUT {{baseUrl}}/books/622f217c612c377b35558fd5/
 Content-Type: application/json
 
 {
@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 ###
 
-DELETE {{baseUrl}}/books/sktwigfnkzpzk9wy/
+DELETE {{baseUrl}}/books/622f216b612c377b35558fcf/
 ###
 
 POST {{baseUrl}}/user/login/

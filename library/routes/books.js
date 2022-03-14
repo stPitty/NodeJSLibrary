@@ -2,15 +2,19 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-const models = require('../models/models');
-const { books } = models.dataBase;
+const Book = require('../models/models');
 
 router
-  .get('/', (req, res) => {
-    res.render('books/index', {
-      title: 'Книги',
-      'books': books,
-    })
+  .get('/', async (req, res) => {
+    try {
+      const books = await Book.find();
+      res.render('books/index', {
+        title: 'Книги',
+        'books': books,
+      })
+    } catch (e) {
+      console.error(e);
+    }
   })
   .get('/create', (req, res) => {
     res.render('books/update-or-create', {
@@ -18,82 +22,85 @@ router
       'book': {},
     })
   })
-  .post('/create', (req, res) => {
-    const { title, description, authors, favorite, fileCover, fileName, id } = req.body;
+  .post('/create', async (req, res) => {
+    const { title, description, authors, favorite, fileCover, fileName} = req.body;
 
-    const newBook = new models.Book(title, description, authors, favorite, fileCover, fileName, id);
-    books.push(newBook);
+    const newBook = new Book({title, description, authors, favorite, fileCover, fileName});
+    try {
+      await newBook.save()
+      res.redirect('/books');
+    } catch (e) {
+      console.error(e);
+    }
 
-    res.redirect('/books');
   })
   .get('/:id', async (req, res) => {
     const { id } = req.params;
-    const dbId = books.findIndex(el => el.id === id);
+    try {
+      const book = await Book.findById(id);
 
-    const DATAURL = process.env.DATAURL || 'http://localhost:3002';
+      const DATAURL = process.env.DATAURL || 'http://localhost:3002';
 
-    if (dbId !== -1) {
-      try {
-        await axios.post(`${DATAURL}/counter/${id}/incr`);
-        const axResp = await axios.get(`${DATAURL}/counter/${id}`);
+      await axios.post(`${DATAURL}/counter/${id}/incr`);
+      const axResp = await axios.get(`${DATAURL}/counter/${id}`);
 
-        res.render('books/view', {
-          title: books[dbId].title,
-          'book': books[dbId],
-          counter: axResp.data.value,
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      res
-        .status(404)
-        .redirect('/404');
-    }
-  })
-  .get('/update/:id', (req, res) => {
-    const { id } = req.params;
-    const dbId = books.findIndex(el => el.id === id);
-
-    if (dbId !== -1) {
-      res.render('books/update-or-create', {
-        title: books[dbId].title,
-        'book': books[dbId],
+      res.render('books/view', {
+        title: book.title,
+        'book': book,
+        counter: axResp.data.value,
       });
-    } else {
+    } catch (e) {
+      console.error(e);
       res
         .status(404)
         .redirect('/404');
     }
   })
-  .post('/update/:id', (req, res) => {
+  .get('/update/:id', async (req, res) => {
     const { id } = req.params;
-    const dbId = books.findIndex(el => el.id === id);
 
-    const { title, description, authors, favorite, fileCover, fileName} = req.body;
+    try {
+      const book = await Book.findById(id);
+      res.render('books/update-or-create', {
+        title: book.title,
+        'book': book,
+      });
+    } catch (e) {
+      console.error(e);
+      res
+        .status(404)
+        .redirect('/404');
+    }
+  })
+  .post('/update/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+      const book = await Book.findById(id);
+      const { title, description, authors, favorite, fileCover, fileName} = req.body;
 
-    if (dbId !== -1) {
-      if (title) books[dbId].title = title;
-      if (description) books[dbId].description = description;
-      if (authors) books[dbId].authors = authors;
-      if (favorite) books[dbId].favorite = favorite;
-      if (fileCover) books[dbId].fileCover = fileCover;
-      if (fileName) books[dbId].fileName = fileName;
+      if (title) book.title = title;
+      if (description) book.description = description;
+      if (authors) book.authors = authors;
+      if (favorite) book.favorite = favorite;
+      if (fileCover) book.fileCover = fileCover;
+      if (fileName) book.fileName = fileName;
+
+      await book.save();
       res.redirect(`/books/${id}`);
-    } else {
+    } catch (e) {
+      console.error(e);
       res
         .status(404)
         .redirect('/404');
     }
   })
-  .post('/delete/:id', (req, res) => {
+  .post('/delete/:id', async (req, res) => {
     const { id } = req.params;
-    const dbId = books.findIndex(el => el.id === id);
-
-    if (dbId !== -1) {
-      const deletedEl = books.splice(dbId, 1);
+    try {
+      await Book.deleteOne({_id: id});
       res.redirect('/books');
-    } else {
+    } catch (e) {
+      console.error(e);
       res
         .status(404)
         .redirect('/404')

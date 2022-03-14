@@ -1,78 +1,92 @@
 const express = require('express');
 const router = express.Router();
 
-const models = require('../../models/models');
-const { books } = models.dataBase;
+const Book = require('../../models/models');
 const fileMiddleware = require('../../middleware/book-file')
 
 
 router
-  .get('/', (req, res) => {
-  res.json(books);
+  .get('/', async (req, res) => {
+  try {
+    const books = await Book.find().select('-__v');
+    res.json(books)
+  } catch (e) {
+    console.error(e);
+  }
 })
-  .get('/:id', (req, res) => {
+  .get('/:id', async (req, res) => {
     const { id } = req.params;
-    const dbId = books.findIndex(el => el.id === id);
-
-    if (dbId !== -1) {
-      res.json(books[dbId]);
-    } else {
+    try {
+      const book = await Book.findById(id).select('-__v');
+      res.json(book);
+    } catch (e) {
+      console.error(e);
       res
         .status(404)
         .json({"Error": "File not found"});
     }
   })
-  .post('/', (req, res) => {
-    const { title, description, authors, favorite, fileCover, fileName, id } = req.body;
-
-    const newBook = new models.Book(title, description, authors, favorite, fileCover, fileName, id);
-    books.push(newBook);
-
-    res
-      .status(201)
-      .json(newBook);
-  })
-  .put('/:id', (req, res) => {
-    const { id } = req.params;
-    const dbId = books.findIndex(el => el.id === id);
-
+  .post('/', async (req, res) => {
     const { title, description, authors, favorite, fileCover, fileName} = req.body;
+    try {
+      const newBook = new Book({title, description, authors, favorite, fileCover, fileName})
+      await newBook.save();
+      res
+        .status(201)
+        .json(newBook);
+    } catch (e) {
+      console.error(e)
+    }
+  })
+  .put('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+      const book = await Book.findById(id).select('-__v');
 
-    if (dbId !== -1) {
-      if (title) books[dbId].title = title;
-      if (description) books[dbId].description = description;
-      if (authors) books[dbId].authors = authors;
-      if (favorite) books[dbId].favorite = favorite;
-      if (fileCover) books[dbId].fileCover = fileCover;
-      if (fileName) books[dbId].fileName = fileName;
-      res.json(books[dbId]);
-    } else {
+      const {title, description, authors, favorite, fileCover, fileName} = req.body;
+
+      if (title) book.title = title;
+      if (description) book.description = description;
+      if (authors) book.authors = authors;
+      if (favorite) book.favorite = favorite;
+      if (fileCover) book.fileCover = fileCover;
+      if (fileName) book.fileName = fileName;
+
+      await book.save()
+      res
+        .status(201)
+        .json(book);
+
+    } catch (e) {
+      console.error(e);
       res
         .status(404)
         .json({"Error": "File not found"});
     }
   })
-  .delete('/:id', (req, res) => {
+  .delete('/:id', async (req, res) => {
     const { id } = req.params;
-    const dbId = books.findIndex(el => el.id === id);
-
-    if (dbId !== -1) {
-      const deletedEl = books.splice(dbId, 1);
-      const result = {
+    try {
+      const book = await Book.findById(id).select('-__v');
+      await Book.deleteOne({_id: id})
+      res.json({
         "Action status": "successful",
-        "Deleted element": deletedEl[0]
-      }
-      res
-        .json(result);
-    } else {
+        "Deleted element": book,
+      })
+    } catch (e) {
+      console.error(e);
       res
         .status(404)
         .json({"Error": "File not found"});
     }
   })
   .post('/upload-book', fileMiddleware.single('fileBook'), (req, res) => {
-    if (req.file) res.json(req.file.path);
-    else res.json(null);
+    if (req.file) {
+      res.json(req.file.path);
+    }
+    else {
+      res.json(null);
+    }
   })
   .get('/:id/download', (req, res) => {
     const { id } = req.params;
