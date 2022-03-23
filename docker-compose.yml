@@ -1,8 +1,8 @@
 services:
   mongodb:
     image: mongo
-    expose:
-      - 27017
+    ports:
+      - 27017:27017
     environment:
       - MONGO_INITDB_DATABASE=library
       - MONGO_INITDB_ROOT_USERNAME=root
