@@ -15,6 +15,9 @@
                 <p class="card-text">FileBook: <%= book.fileBook %></p>
                 <p class="card-text">Страницу просмотрели: <%= counter %> раз</p>
                 <div class="text-right">
+                    <a class="btn btn-sm btn-primary" href="/chat?room=<%= book.id %>" style="background-color: green; border: 0;">
+                        Комментарии
+                    </a>
                     <a class="btn btn-sm btn-primary" href="/books/update/<%= book.id %>">
                         <i class="fa fa-pencil" aria-hidden="true"></i>
                     </a>
@@ -28,5 +31,4 @@
         </div>
     </div>
 </div>
-
 <%- include("../partials/layout-end") %>

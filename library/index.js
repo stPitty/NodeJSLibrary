@@ -2,7 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+const { chatRouter, socket } = require('./routes/chat');
+
 const app = express();
+const http = require('http');
+const server = http.createServer(app);
 const PORT = process.env.PORT || 80;
 const dataBase = {
   host: process.env.HOSTDB || 'mongodb://localhost:27017',
@@ -10,6 +14,8 @@ const dataBase = {
   password: process.env.DBPASS || 'a123',
   user: process.env.DBUSER || 'root',
 };
+
+socket(server);
 
 app
   .use(bodyParser.json())
@@ -21,6 +27,7 @@ app
     saveUninitialized: true,
   }))
   .use('/', require('./routes/index'))
+  .use('/chat', chatRouter)
   .use('/api/user', require('./routes/api/users'))
   .use('/api/books', require('./routes/api/books'))
   .use('/books', require('./routes/books'))
@@ -35,7 +42,7 @@ async function start() {
       dbName: dataBase.name,
     });
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Library is running on port ${PORT}`)
     });
   } catch (e) {

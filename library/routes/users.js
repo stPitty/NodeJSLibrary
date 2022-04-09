@@ -8,10 +8,14 @@ const isAuthenticated = require('../middleware/passport/isauthenticated')
 async function loginVerify (username, password, done) {
   try {
     const user = await User.findOne({username: username});
-    if (!user || !(user.password === password)) { return done(null, false) }
-    return done(null, user)
+    if (!user || !(user.password === password)) {
+      return done(null, false)
+    }
+    return done(null, user);
 
-  } catch (e) { return done(e) }
+  } catch (e) {
+    return done(e);
+  }
 }
 
 async function signupVerify (username, password, done) {
@@ -38,6 +42,7 @@ passport
 passport.serializeUser(function (user, cb) {
   cb(null, user._id)
 });
+
 passport.deserializeUser(async function (id, cb) {
   try {
     const user = await User.findById(id);
