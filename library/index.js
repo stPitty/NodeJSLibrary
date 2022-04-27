@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const { chatRouter, socket } = require('./routes/chat');
+const {chatRouter, socket} = require('./routes/chat');
 
 const app = express();
 const http = require('http');
@@ -18,21 +18,21 @@ const dataBase = {
 socket(server);
 
 app
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({extended: false}))
-  .set('view engine', 'ejs')
-  .use(require('express-session')({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true,
-  }))
-  .use('/', require('./routes/index'))
-  .use('/chat', chatRouter)
-  .use('/api/user', require('./routes/api/users'))
-  .use('/api/books', require('./routes/api/books'))
-  .use('/books', require('./routes/books'))
-  .use('/users', require('./routes/users'))
-  .use(require('./middleware/error'));
+    .use(bodyParser.json())
+    .use(bodyParser.urlencoded({extended: false}))
+    .set('view engine', 'ejs')
+    .use(require('express-session')({
+      secret: 'secret',
+      resave: true,
+      saveUninitialized: true,
+    }))
+    .use('/', require('./routes/index'))
+    .use('/chat', chatRouter)
+    .use('/api/user', require('./routes/api/users'))
+    .use('/api/books', require('./routes/api/books'))
+    .use('/books', require('./routes/books'))
+    .use('/users', require('./routes/users'))
+    .use(require('./middleware/error'));
 
 async function start() {
   try {
@@ -43,7 +43,7 @@ async function start() {
     });
 
     server.listen(PORT, () => {
-      console.log(`Library is running on port ${PORT}`)
+      console.log(`Library is running on port ${PORT}`);
     });
   } catch (e) {
     console.error(e);
@@ -51,6 +51,3 @@ async function start() {
 }
 
 start();
-
-
-
