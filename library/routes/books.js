@@ -9,33 +9,32 @@ router
     try {
       const books = await Book.find();
       res.render('books/index', {
-        title: 'Книги',
+        'title': 'Книги',
         'books': books,
-      })
+      });
     } catch (e) {
       console.error(e);
     }
   })
   .get('/create', (req, res) => {
     res.render('books/update-or-create', {
-      title: 'Добавление новой книги',
+      'title': 'Добавление новой книги',
       'book': {},
-    })
+    });
   })
   .post('/create', async (req, res) => {
-    const { title, description, authors, favorite, fileCover, fileName} = req.body;
+    const {title, description, authors, favorite, fileCover, fileName} = req.body;
 
     const newBook = new Book({title, description, authors, favorite, fileCover, fileName});
     try {
-      await newBook.save()
+      await newBook.save();
       res.redirect('/books');
     } catch (e) {
       console.error(e);
     }
-
   })
   .get('/:id', async (req, res) => {
-    const { id } = req.params;
+    const {id} = req.params;
     try {
       const book = await Book.findById(id);
 
@@ -45,9 +44,9 @@ router
       const axResp = await axios.get(`${DATAURL}/counter/${id}`);
 
       res.render('books/view', {
-        title: book.title,
+        'title': book.title,
         'book': book,
-        counter: axResp.data.value,
+        'counter': axResp.data.value,
       });
     } catch (e) {
       console.error(e);
@@ -57,12 +56,12 @@ router
     }
   })
   .get('/update/:id', async (req, res) => {
-    const { id } = req.params;
+    const {id} = req.params;
 
     try {
       const book = await Book.findById(id);
       res.render('books/update-or-create', {
-        title: book.title,
+        'title': book.title,
         'book': book,
       });
     } catch (e) {
@@ -73,10 +72,10 @@ router
     }
   })
   .post('/update/:id', async (req, res) => {
-    const { id } = req.params;
+    const {id} = req.params;
     try {
       const book = await Book.findById(id);
-      const { title, description, authors, favorite, fileCover, fileName} = req.body;
+      const {title, description, authors, favorite, fileCover, fileName} = req.body;
 
       if (title) book.title = title;
       if (description) book.description = description;
@@ -95,7 +94,7 @@ router
     }
   })
   .post('/delete/:id', async (req, res) => {
-    const { id } = req.params;
+    const {id} = req.params;
     try {
       await Book.deleteOne({_id: id});
       res.redirect('/books');
@@ -103,13 +102,10 @@ router
       console.error(e);
       res
         .status(404)
-        .redirect('/404')
+        .redirect('/404');
     }
   });
 
-module.exports = router
-
-
-
+module.exports = router;
 
 

@@ -1,3 +1,5 @@
+import {Container} from 'inversify';
+
 interface IBook {
     title: string,
     description: string,
@@ -20,7 +22,7 @@ abstract class BooksRepository {
     return;
   }
 
-  abstract updateBook(id: number): IBook {
+  abstract updateBook(id: number, book: IBook): IBook {
     return;
   }
 
@@ -28,3 +30,8 @@ abstract class BooksRepository {
     return;
   }
 }
+
+const myContainer = new Container();
+myContainer.bind(BooksRepository).toSelf();
+
+export {myContainer, BooksRepository};
