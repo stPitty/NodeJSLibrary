@@ -1,14 +1,17 @@
-const express = require('express');
-const router = express.Router();
-const { Server } = require('socket.io');
+import express from 'express';
+import {Server} from 'socket.io';
+import {Server as HttpServer} from 'http';
 
-function socket(server) {
+
+export const router = express.Router();
+
+export function socket(server: HttpServer) {
   const io = new Server(server);
 
   io.on('connection', (socket) => {
     const {id} = socket;
-    console.log(`user ${id} has been connected`)
-    const { room } = socket.handshake.query;
+    console.log(`user ${id} has been connected`);
+    const {room} = socket.handshake.query;
 
     socket.on('disconnect', () => {
       console.log(`user ${id} has been disconnected`);
@@ -26,11 +29,6 @@ function socket(server) {
 
 router.get('/', (req, res) => {
   res.render('chat', {
-    title: 'Чат'
+    title: 'Чат',
   });
-})
-
-module.exports = {
-  chatRouter: router,
-  socket: socket,
-}
+});

@@ -1,13 +1,17 @@
-const express = require('express');
-const axios = require('axios');
+import express from 'express';
+import axios from 'axios';
+
+import Book from '../models/books';
+import {iocContainerBooks} from '../services/ioc-container';
+import {AbstractBooksRepository} from '../services/abstract-services';
+
+const repo = iocContainerBooks.get(AbstractBooksRepository);
+
 const router = express.Router();
-
-const Book = require('../models/models');
-
 router
   .get('/', async (req, res) => {
     try {
-      const books = await Book.find();
+      const books = await repo.getBooks();
       res.render('books/index', {
         'title': 'Книги',
         'books': books,
@@ -27,7 +31,7 @@ router
 
     const newBook = new Book({title, description, authors, favorite, fileCover, fileName});
     try {
-      await newBook.save();
+      await repo.createBook(newBook);
       res.redirect('/books');
     } catch (e) {
       console.error(e);
@@ -36,7 +40,7 @@ router
   .get('/:id', async (req, res) => {
     const {id} = req.params;
     try {
-      const book = await Book.findById(id);
+      const book = await repo.getBook(id);
 
       const DATAURL = process.env.DATAURL || 'http://localhost:3002';
 
@@ -59,7 +63,7 @@ router
     const {id} = req.params;
 
     try {
-      const book = await Book.findById(id);
+      const book = await repo.getBook(id);
       res.render('books/update-or-create', {
         'title': book.title,
         'book': book,
@@ -74,17 +78,16 @@ router
   .post('/update/:id', async (req, res) => {
     const {id} = req.params;
     try {
-      const book = await Book.findById(id);
-      const {title, description, authors, favorite, fileCover, fileName} = req.body;
+      const book = {
+        title: req.body.title,
+        description: req.body.description,
+        authors: req.body.authors,
+        favorite: req.body.favorite,
+        fileCover: req.body.fileCover,
+        fileName: req.body.fileName,
+      };
 
-      if (title) book.title = title;
-      if (description) book.description = description;
-      if (authors) book.authors = authors;
-      if (favorite) book.favorite = favorite;
-      if (fileCover) book.fileCover = fileCover;
-      if (fileName) book.fileName = fileName;
-
-      await book.save();
+      await repo.updateBook(id, book);
       res.redirect(`/books/${id}`);
     } catch (e) {
       console.error(e);
@@ -96,7 +99,7 @@ router
   .post('/delete/:id', async (req, res) => {
     const {id} = req.params;
     try {
-      await Book.deleteOne({_id: id});
+      await repo.deleteBook(id);
       res.redirect('/books');
     } catch (e) {
       console.error(e);
@@ -106,6 +109,6 @@ router
     }
   });
 
-module.exports = router;
+export = router;
 
 

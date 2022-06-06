@@ -2,16 +2,22 @@
   "name": "nodejs-library",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "node_modules/.bin/nodemon index.js"
+    "start": "node dist/index.js",
+    "dev": "node_modules/.bin/nodemon dist/index.js",
+    "build": "tsc --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.4",
+    "@types/multer": "^1.4.7",
+    "@types/passport": "^1.0.7",
+    "@types/passport-local": "^1.0.34",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
     "eslint": "^8.14.0",

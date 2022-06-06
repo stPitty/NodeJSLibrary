@@ -1,18 +1,18 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
-const Book = require('../../models/models');
-const fileMiddleware = require('../../middleware/book-file');
+import Book from '../../models/books';
+import fileMiddleware from '../../middleware/book-file';
+import {iocContainerBooks} from '../../services/ioc-container';
+import {AbstractBooksRepository} from '../../services/abstract-services';
 
-import {myContainer, BooksRepository} from '../../ts/book';
-const repo = myContainer.get(BooksRepository);
+const repo = iocContainerBooks.get(AbstractBooksRepository);
 
 
 router
   .get('/', async (req, res) => {
     try {
       const books = await repo.getBooks();
-      // const books = await Book.find().select('-__v');
       res.json(books);
     } catch (e) {
       console.error(e);
@@ -22,7 +22,6 @@ router
     const {id} = req.params;
     try {
       const book = await repo.getBook(id);
-      // const book = await Book.findById(id).select('-__v');
       res.json(book);
     } catch (e) {
       console.error(e);
@@ -35,7 +34,6 @@ router
     const {title, description, authors, favorite, fileCover, fileName} = req.body;
     try {
       const newBook = new Book({title, description, authors, favorite, fileCover, fileName});
-      // await newBook.save();
       await repo.createBook(newBook);
       res
         .status(201)
@@ -47,20 +45,17 @@ router
   .put('/:id', async (req, res) => {
     const {id} = req.params;
     try {
-      const book = await repo.getBook(id);
-      // const book = await Book.findById(id).select('-__v');
-
-      const {title, description, authors, favorite, fileCover, fileName} = req.body;
-
-      if (title) book.title = title;
-      if (description) book.description = description;
-      if (authors) book.authors = authors;
-      if (favorite) book.favorite = favorite;
-      if (fileCover) book.fileCover = fileCover;
-      if (fileName) book.fileName = fileName;
+      const book = {
+        title: req.body.title,
+        description: req.body.description,
+        authors: req.body.authors,
+        favorite: req.body.favorite,
+        fileCover: req.body.fileCover,
+        fileName: req.body.fileName,
+      };
 
       await repo.updateBook(id, book);
-      // await book.save();
+
       res
         .status(201)
         .json(book);
@@ -74,10 +69,7 @@ router
   .delete('/:id', async (req, res) => {
     const {id} = req.params;
     try {
-      const book = await repo.getBook(id);
-      // const book = await Book.findById(id).select('-__v');
-      await repo.deleteBook(id);
-      // await Book.deleteOne({_id: id});
+      const book = await repo.deleteBook(id);
       res.json({
         'Action status': 'successful',
         'Deleted element': book,
@@ -108,5 +100,4 @@ router
     });
   });
 
-module.exports = router;
-
+export = router;
